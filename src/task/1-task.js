@@ -1,12 +1,19 @@
 import { namespaceWrapper } from "@_koii/namespace-wrapper";
+import { setup } from "./0-setup.js"; // Import the setup function to access the mock CID
 
 export async function task(roundNumber) {
-  // Run your task and store the proofs to be submitted for auditing
-  // The submission of the proofs is done in the submission function
   try {
     console.log(`EXECUTE TASK FOR ROUND ${roundNumber}`);
-    // you can optionally return this value to be used in debugging
-    await namespaceWrapper.storeSet("value", "Hello, World!");
+
+    // Run the setup function to get the initial state, including the mocked CID
+    const { cid } = await setup(); // Extract the mock CID from the setup function
+
+    // Store the mocked CID in KOII's namespace storage for later use in the submission function
+    await namespaceWrapper.storeSet("documentCid", cid);
+    console.log("Mocked CID stored for task:", cid);
+
+    // Optionally, you can return the CID for debugging purposes
+    return cid;
   } catch (error) {
     console.error("EXECUTE TASK ERROR:", error);
   }

@@ -7,7 +7,13 @@ export async function submission(roundNumber) {
    */
   try {
     console.log(`MAKE SUBMISSION FOR ROUND ${roundNumber}`);
-    return await namespaceWrapper.storeGet("value");
+
+    // Retrieve the mocked CID stored in the task function
+    const cid = await namespaceWrapper.storeGet("documentCid");
+
+    // Log and return the CID as the submission proof for auditing
+    console.log("Submitting CID as proof:", cid);
+    return cid;
   } catch (error) {
     console.error("MAKE SUBMISSION ERROR:", error);
   }
