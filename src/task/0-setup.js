@@ -1,23 +1,46 @@
-// Import any necessary libraries or configurations here
-// For example, if MongoDB or KOII client initialization is needed, we would include those here
+const fs = require("fs");
+import { Keypair } from "@_koii/web3.js";
+// const { KoiiStorageClient } = require("@_koii/storage-task-sdk");
+import { KoiiStorageClient } from "@_koii/storage-task-sdk";
 
-// Mocked CID (Content Identifier) as if it were generated from an IPFS upload
-const mockCid =
-  "QmT5NvUtoM5nXqZgY5NqCJsfd7LXTh5VJHGRo5fH4uVgPp888furqanqadrimon";
+const client = new KoiiStorageClient();
+const wallet = fs.readFileSync(
+  "/Users/furqanqadri/Library/Application Support/KOII-Desktop-Node/namespace/furqan_stakingWallet.json",
+  "utf-8",
+);
+const userStaking = Keypair.fromSecretKey(Uint8Array.from(JSON.parse(wallet)));
+const filePath = "/Users/furqanqadri/Desktop/data_analysis/data_analysis.py"; // replace with your actual file path
 
+// Function to upload a file and get the CID
+async function uploadFile() {
+  try {
+    const fileUploadResponse = await client.uploadFile(filePath, userStaking);
+    const cid = fileUploadResponse.cid;
+    console.log("File uploaded successfully. CID:", cid);
+    return cid;
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    return null;
+  }
+}
+
+// Main setup function to only upload the file and get CID
 export async function setup() {
-  // Define any steps that must be executed before the task starts
-  console.log("I AM HEREeeeee");
+  console.log("Running setup...");
 
-  // Log the mocked CID to simulate pre-existing content
-  console.log("Mocked CID for Document:", mockCid);
+  // Upload the file and retrieve the CID
+  const cid = await uploadFile();
+  if (!cid) {
+    console.error("File upload failed, CID not generated.");
+    return;
+  }
 
-  // Set up any additional configurations or objects as needed here
-  // For example, if MongoDB setup or KOII client setup is required, include that here
+  // Log the CID as part of the initial setup
+  console.log("Initial CID:", cid);
 
-  // Example of setting up a mock state if needed
+  // Return the initial state with just the CID
   const initialState = {
-    cid: mockCid, // Use the mocked CID as part of the initial state
+    cid: cid,
     initialized: true,
   };
 
