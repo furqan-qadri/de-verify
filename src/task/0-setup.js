@@ -1,15 +1,32 @@
-const fs = require("fs");
+import fs from "fs";
+import mongoose from "mongoose";
 import { Keypair } from "@_koii/web3.js";
-// const { KoiiStorageClient } = require("@_koii/storage-task-sdk");
 import { KoiiStorageClient } from "@_koii/storage-task-sdk";
 
+// MongoDB connection
+const mongoURI =
+  "mongodb+srv://furqan:hello123@deverify.az0xd.mongodb.net/de_verify?retryWrites=true&w=majority";
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+// Define the MongoDB schema and model for the `documents` collection
+const fileSchema = new mongoose.Schema({
+  cid: { type: String, required: true, unique: true },
+  fileName: { type: String, required: true },
+  uploadDate: { type: Date, default: Date.now },
+  uploader: { type: String, required: true },
+});
+
+// Specify the collection name explicitly using the third argument in mongoose.model
+const File = mongoose.model("File", fileSchema, "documents");
+
+// Initialize Koii Storage Client and Keypair
 const client = new KoiiStorageClient();
 const wallet = fs.readFileSync(
   "/Users/furqanqadri/Library/Application Support/KOII-Desktop-Node/namespace/furqan_stakingWallet.json",
   "utf-8",
 );
 const userStaking = Keypair.fromSecretKey(Uint8Array.from(JSON.parse(wallet)));
-const filePath = "/Users/furqanqadri/Desktop/data_analysis/data_analysis.py"; // replace with your actual file path
+const filePath = "/Users/furqanqadri/Desktop/data_analysis/output.json"; // replace with your actual file path
 
 // Function to upload a file and get the CID
 async function uploadFile() {
@@ -24,7 +41,23 @@ async function uploadFile() {
   }
 }
 
-// Main setup function to only upload the file and get CID
+// Function to save file metadata to MongoDB
+async function saveFileMetadata(cid) {
+  try {
+    const fileRecord = new File({
+      cid,
+      fileName: filePath.split("/").pop(), // Extract file name from path
+      uploader: "user123", // Replace with actual user identifier if available
+    });
+
+    const savedFile = await fileRecord.save();
+    console.log("File metadata saved to MongoDB:", savedFile);
+  } catch (error) {
+    console.error("Error saving file metadata to MongoDB:", error);
+  }
+}
+
+// Main setup function to upload file, get CID, and save metadata
 export async function setup() {
   console.log("Running setup...");
 
@@ -37,6 +70,9 @@ export async function setup() {
 
   // Log the CID as part of the initial setup
   console.log("Initial CID:", cid);
+
+  // Save file metadata to MongoDB
+  await saveFileMetadata(cid);
 
   // Return the initial state with just the CID
   const initialState = {
