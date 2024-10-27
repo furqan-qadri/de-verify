@@ -6,6 +6,7 @@ import { KoiiStorageClient } from "@_koii/storage-task-sdk";
 // MongoDB connection
 const mongoURI =
   "mongodb+srv://furqan:hello123@deverify.az0xd.mongodb.net/de_verify?retryWrites=true&w=majority";
+
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Define the MongoDB schema and model for the `documents` collection
@@ -56,6 +57,32 @@ async function saveFileMetadata(cid) {
     console.error("Error saving file metadata to MongoDB:", error);
   }
 }
+
+async function findFileByCid(cid) {
+  try {
+    const file = await File.findOne({ cid });
+    const found = file ? 1 : 0;
+
+    if (found) {
+      console.log("The File has been found and verified", file);
+    } else {
+      console.log("No file found with the given CID.");
+    }
+
+    return { found, file };
+  } catch (error) {
+    console.error("Error finding file by CID:", error);
+    return { found: 0, file: null };
+  }
+}
+
+// Example usage:
+findFileByCid(
+  "bafybeiafqergy7f67ezucfkp5ctfsrcin7sjdg2lbxfscnw7gbuwzsn2j4",
+).then((result) => {
+  console.log("Found:", result.found);
+  console.log("File:", result.file);
+});
 
 // Main setup function to upload file, get CID, and save metadata
 export async function setup() {
