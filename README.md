@@ -1,70 +1,41 @@
-# Koii Task Template
 
-## Development Guide
+# Project Title
 
-First time writing a task? Start with the [Development Guide](https://github.com/koii-network/ezsandbox).
+DeVerify is a defi app which helps organizations (or other persons) verify the authenticity and the immutability of the various documents like (files, photos, documents etc) which they received from someone else.
 
-## Task Flow
+The app has been deployed on KOII.
 
-Tasks operate within a periodic structure known as 'rounds'. Each round consists of the following steps:
+There are two entities:
 
-1. **Perform the Task:** Execute the necessary actions for the round.
-2. **Audit Work:** Review the work completed by other nodes.
-3. **Rewards and Penalties:** Distribute rewards and apply penalties as necessary.
+1. Uploader: Person who uploads his original files like IDs, certs etc for verification by others.
 
-For more detailed information about the task flow, refer to [the runtime flow documentation](https://docs.koii.network/concepts/what-are-tasks/what-are-tasks/gradual-consensus).
-
-Looking to bring better structure to your task? Explore our [Task Organizer](https://www.figma.com/community/file/1220194939977550205/Task-Outline) for better organization.
-
-## Tips
-
-- Always ensure your secret files, such as `.env` files, are secure! Implement a robust `.gitignore` strategy.
-- Continue innovating with Koii!
-
-Should you encounter any issues, don't hesitate to reach out by opening a ticket on [Discord](https://discord.gg/koii-network).
-
-## Environment Requirements
-
-- [Node >=16.0.0](https://nodejs.org)
-- [Docker Compose](https://docs.docker.com/get-started/08_using_compose/)
-
-## Tool Requirements
-
-- [Koii CLI Suite](https://docs.koii.network/develop/command-line-tool/koii-cli/install-cli)
-- [Create Task CLI](https://docs.koii.network/develop/command-line-tool/create-task-cli/install)
-
-## Available Scripts
+2. Verifier: Person who needs to verify the document which has been sent to him. He/she wants to make sure that the file is original and its content has not been changed.
 
 
-Simulate rounds using simulateTask.js.
 
-```sh
-yarn test
-```
+Here is how it works in simple words:
 
-Runs Jest unit tests.
+1. Uploader uploads his original files to the KOII network using the upload feature of DeVerify.
 
-```sh
-yarn jest-test
-```
+2. The file is uploaded and a CID (Content identifier) is generated. This is specific to the content of the file. Even the slightest of changes in the file, will lead to a different CID. 
+
+3. To make performance better and to reduce round trips to the blockchain, the CID is logged to a lightweight MongoDB cluster.
+
+4. Now, the verifier uploads the same document to De-Verify which he received from someone and wants to check if its still contains original content. 
+
+4. Once the verifier uploads the documents, if the content is the same as the original the CID would be the same as was generated in step 2 which means the doc is verified. (De-verify will use the MongoDB logging to check for this)
+
+5. If the CID of the doc has changed, it means that the content was modified and the verification would fail. 
 
 
-Builds the project and generates the main script: `dist/main.js`.
 
-```sh
-yarn webpack
-```
 
-Runs the live debugger (must have the task running in the desktop node).
 
-```sh
-yarn prod-debug
-```
 
-## Runtime Options
 
-There are two ways to run your task during development:
 
-1. With `GLOBAL_TIMERS="true"` (refer to `.env.local.example`) - When this option is enabled, IPC calls are made by calculating the average time slots of all tasks running on your node.
 
-2. With `GLOBAL_TIMERS="false"` - This option allows for manual calls to K2 and disables the automatic triggers for round management on K2. Transactions are only accepted during the correct time period. Instructions for manual calls can be found in [Manual K2 Calls](./Manual%20K2%20Calls.md).
+## Screenshots and Walkthrough
+
+
+Please check the PITCH DECK: https://www.canva.com/design/DAGUwofxBI0/YoWap62fPKKOIMBw0QTZGg/edit?utm_content=DAGUwofxBI0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
