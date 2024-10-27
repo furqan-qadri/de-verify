@@ -30,6 +30,7 @@
     "dotenv": "^16.3.0",
     "dotenv-webpack": "^8.1.0",
     "mongoose": "^8.7.3",
+    "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.7",
     "tail": "^2.2.6"
   },

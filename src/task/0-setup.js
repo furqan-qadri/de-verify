@@ -29,6 +29,8 @@ const wallet = fs.readFileSync(
 const userStaking = Keypair.fromSecretKey(Uint8Array.from(JSON.parse(wallet)));
 const filePath = "/Users/furqanqadri/Desktop/data_analysis/output.json"; // replace with your actual file path
 
+export { File };
+
 // Function to upload a file and get the CID
 async function uploadFile() {
   try {
